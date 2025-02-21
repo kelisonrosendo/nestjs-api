@@ -7,23 +7,38 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UsuariosService {
   constructor(private prismaService: PrismaService) {}
 
-  create(createUsuarioDto: CreateUsuarioDto) {
-    return 'This action adds a new usuario';
+  async create(createUsuarioDto: CreateUsuarioDto) {
+    return this.prismaService.usuario.create({
+      data: createUsuarioDto,
+    });
   }
 
   findAll() {
-    return `This action returns all usuarios`;
+    return this.prismaService.usuario.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} usuario`;
+  findOne(id: string) {
+    return this.prismaService.usuario.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
-  update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    return `This action updates a #${id} usuario`;
+  update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
+    return this.prismaService.usuario.update({
+      data: updateUsuarioDto,
+      where: {
+        id,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} usuario`;
+  remove(id: string) {
+    return this.prismaService.usuario.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
