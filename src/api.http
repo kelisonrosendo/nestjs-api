@@ -1,26 +1,26 @@
-### Create a new user
+### Cria um novo usuário
 POST http://localhost:3000/usuarios
 Content-Type: application/json
 
 {
-  "nome": "John Doe",
-  "email": "john.doe@example.com",
-  "senha": "password123",
+  "nome": "123",
+  "email": "john@doe.com",
+  "senha": "123456",
   "avatar": "https://example.com/avatar.jpg",
   "papel": "ADMIN",
   "status": "ATIVO"
 }
 
-### Armazena o id o do usuário criado
-@usuarioId = 8aa85977-467a-44a8-a3d5-686ed84e5eed
+### Armazena o id do usuário
+@usuarioId = 5a784d9b-ce13-4610-8b40-c088c45262e6
 
-### Get all users
+### Busca todos os usuários
 GET http://localhost:3000/usuarios
 
-### Get a user by ID
+### Busca um usuário pelo ID
 GET http://localhost:3000/usuarios/{{usuarioId}}
 
-### Update a user by ID
+### Atualiza um usuário pelo ID
 PATCH http://localhost:3000/usuarios/{{usuarioId}}
 Content-Type: application/json
 
@@ -28,5 +28,5 @@ Content-Type: application/json
   "avatar": null
 }
 
-### Delete a user by ID
+### Deleta um usuário pelo ID
 DELETE http://localhost:3000/usuarios/{{usuarioId}}

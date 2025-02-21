@@ -8,6 +8,16 @@ export class UsuariosService {
   constructor(private prismaService: PrismaService) {}
 
   async create(createUsuarioDto: CreateUsuarioDto) {
+    const usuario = await this.prismaService.usuario.findFirst({
+      where: {
+        email: createUsuarioDto.email,
+      },
+    });
+
+    if (usuario) {
+      //
+    }
+
     return this.prismaService.usuario.create({
       data: createUsuarioDto,
     });
