@@ -3,16 +3,16 @@ POST http://localhost:3000/usuarios
 Content-Type: application/json
 
 {
-  "nome": "123",
-  "email": "john@doe.com",
+  "nome": "Marie Doeaasdf",
+  "email": "mariedoeasdf@example.com",
   "senha": "123456",
   "avatar": "https://example.com/avatar.jpg",
-  "papel": "ADMIN",
+  "papel": "EDITOR",
   "status": "ATIVO"
 }
 
 ### Armazena o id do usuário
-@usuarioId = 5a784d9b-ce13-4610-8b40-c088c45262e6
+@usuarioId = 42ec656e-35a9-49c2-8d97-184101369a82
 
 ### Busca todos os usuários
 GET http://localhost:3000/usuarios
@@ -25,8 +25,12 @@ PATCH http://localhost:3000/usuarios/{{usuarioId}}
 Content-Type: application/json
 
 {
-  "avatar": null
+  "status": "INATIVO",
+  "email": "johndoe@example.com"
 }
 
 ### Deleta um usuário pelo ID
 DELETE http://localhost:3000/usuarios/{{usuarioId}}
+
+### Busca paginada de usuários
+GET http://localhost:3000/usuarios/query

@@ -5,12 +5,14 @@ import {
   Body,
   Patch,
   Param,
+  Query,
   Delete,
   HttpCode,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { UsuarioQueryDto } from './dto/usuario-query.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -24,6 +26,11 @@ export class UsuariosController {
   @Get()
   findAll() {
     return this.usuariosService.findAll();
+  }
+
+  @Get('query')
+  findQuery(@Query() queryDto: UsuarioQueryDto) {
+    return this.usuariosService.findQuery(queryDto);
   }
 
   @Get(':id')
