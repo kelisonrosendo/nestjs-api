@@ -1,4 +1,5 @@
 import { EnumPapelUsuario, EnumStatusUsuario } from '@prisma/client';
+import { Exclude } from 'class-transformer';
 import {
   IsDate,
   IsEmail,
@@ -48,4 +49,9 @@ export class CreateUsuarioDto {
   @IsDate({ message: '$property deve ser uma data válida' })
   @IsOptional()
   updated_at: Date;
+}
+
+export class UsuarioResponseDto extends CreateUsuarioDto {
+  @Exclude()
+  declare senha: string;
 }

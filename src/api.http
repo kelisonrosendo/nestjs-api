@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "nome": "Marie Doeaasdf",
-  "email": "mariedoeasdf@example.com",
+  "email": "mariedoe@example.com",
   "senha": "123456",
   "avatar": "https://example.com/avatar.jpg",
   "papel": "EDITOR",
@@ -34,3 +34,11 @@ DELETE http://localhost:3000/usuarios/{{usuarioId}}
 
 ### Busca paginada de usuários
 GET http://localhost:3000/usuarios/query
+
+### Gemini
+POST http://localhost:3000/ai/generate
+Content-Type: application/json
+
+{
+  "prompt": "Me passe 5 exercícios para treino de peitoral. Quero que me informe isso em um formato json com um campo para cada informação: nome do exercício, foco do exercício, execução, dica e se for possível um link de execução do exercício no youtube"
+}

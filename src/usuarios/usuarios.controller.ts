@@ -10,9 +10,10 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { CreateUsuarioDto, UsuarioResponseDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { UsuarioQueryDto } from './dto/usuario-query.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -34,8 +35,10 @@ export class UsuariosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usuariosService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const usuario = await this.usuariosService.findOne(id);
+
+    return plainToInstance(UsuarioResponseDto, usuario);
   }
 
   @Patch(':id')

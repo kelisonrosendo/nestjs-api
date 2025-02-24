@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AlreadyExistsError, NotFoundError } from 'src/common/errors';
 import { UsuarioQueryDto } from './dto/usuario-query.dto';
 
 @Injectable()
@@ -17,7 +16,10 @@ export class UsuariosService {
     });
 
     if (usuario) {
-      throw new AlreadyExistsError('usuário', createUsuarioDto.email, 'email');
+      throw new HttpException(
+        { message: `e-mail ${createUsuarioDto.email} já está em uso` },
+        HttpStatus.CONFLICT,
+      );
     }
 
     return this.prismaService.usuario.create({
@@ -37,7 +39,10 @@ export class UsuariosService {
     });
 
     if (!usuario) {
-      throw new NotFoundError('usuário', id);
+      throw new HttpException(
+        { message: `usuário com id ${id} não encontrado` },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     return this.prismaService.usuario.findUnique({
@@ -55,7 +60,10 @@ export class UsuariosService {
     });
 
     if (!usuario) {
-      throw new NotFoundError('usuário', id);
+      throw new HttpException(
+        { message: `usuário com id ${id} não encontrado` },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     if (updateUsuarioDto.email && updateUsuarioDto.email !== usuario.email) {
@@ -66,10 +74,9 @@ export class UsuariosService {
       });
 
       if (existingEmail) {
-        throw new AlreadyExistsError(
-          'usuário',
-          updateUsuarioDto.email,
-          'email',
+        throw new HttpException(
+          { message: `e-mail ${updateUsuarioDto.email} já está em uso` },
+          HttpStatus.CONFLICT,
         );
       }
     }
@@ -90,7 +97,10 @@ export class UsuariosService {
     });
 
     if (!usuario) {
-      throw new NotFoundError('usuário', id);
+      throw new HttpException(
+        { message: `usuário com id ${id} não encontrado` },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     return this.prismaService.usuario.delete({
