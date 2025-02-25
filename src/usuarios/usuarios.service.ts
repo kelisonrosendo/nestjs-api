@@ -1,34 +1,42 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UsuarioQueryDto } from './dto/usuario-query.dto';
+import {
+  UsuarioQueryRequestDto,
+  UsuarioRequestDto,
+  UsuarioResponseDto,
+  UsuarioUpdateRequestDto,
+} from './dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UsuariosService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(createUsuarioDto: CreateUsuarioDto) {
+  async create(usuarioRequest: UsuarioRequestDto) {
     const usuario = await this.prismaService.usuario.findFirst({
       where: {
-        email: createUsuarioDto.email,
+        email: usuarioRequest.email,
       },
     });
 
     if (usuario) {
       throw new HttpException(
-        { message: `e-mail ${createUsuarioDto.email} já está em uso` },
+        { message: `e-mail ${usuarioRequest.email} já está em uso` },
         HttpStatus.CONFLICT,
       );
     }
 
-    return this.prismaService.usuario.create({
-      data: createUsuarioDto,
+    const createdUser = await this.prismaService.usuario.create({
+      data: usuarioRequest,
     });
+
+    return plainToInstance(UsuarioResponseDto, createdUser);
   }
 
-  findAll() {
-    return this.prismaService.usuario.findMany();
+  async findAll() {
+    const users = await this.prismaService.usuario.findMany();
+
+    return plainToInstance(UsuarioResponseDto, users);
   }
 
   async findOne(id: string) {
@@ -45,14 +53,10 @@ export class UsuariosService {
       );
     }
 
-    return this.prismaService.usuario.findUnique({
-      where: {
-        id,
-      },
-    });
+    return plainToInstance(UsuarioResponseDto, usuario);
   }
 
-  async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
+  async update(id: string, usuarioRequest: UsuarioUpdateRequestDto) {
     const usuario = await this.prismaService.usuario.findFirst({
       where: {
         id,
@@ -66,27 +70,29 @@ export class UsuariosService {
       );
     }
 
-    if (updateUsuarioDto.email && updateUsuarioDto.email !== usuario.email) {
+    if (usuarioRequest.email && usuarioRequest.email !== usuario.email) {
       const existingEmail = await this.prismaService.usuario.findFirst({
         where: {
-          email: updateUsuarioDto.email,
+          email: usuarioRequest.email,
         },
       });
 
       if (existingEmail) {
         throw new HttpException(
-          { message: `e-mail ${updateUsuarioDto.email} já está em uso` },
+          { message: `e-mail ${usuarioRequest.email} já está em uso` },
           HttpStatus.CONFLICT,
         );
       }
     }
 
-    return this.prismaService.usuario.update({
-      data: updateUsuarioDto,
+    const updatedUser = await this.prismaService.usuario.update({
+      data: usuarioRequest,
       where: {
         id,
       },
     });
+
+    return plainToInstance(UsuarioResponseDto, updatedUser);
   }
 
   async remove(id: string) {
@@ -110,7 +116,7 @@ export class UsuariosService {
     });
   }
 
-  async findQuery(query: UsuarioQueryDto) {
+  async findQuery(query: UsuarioQueryRequestDto) {
     const { skip = 1, take = 10, search = '' } = query;
 
     const where = {
@@ -138,6 +144,9 @@ export class UsuariosService {
       }),
     ]);
 
-    return { count, usuarios };
+    return {
+      count,
+      usuarios: plainToInstance(UsuarioResponseDto, usuarios),
+    };
   }
 }

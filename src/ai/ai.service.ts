@@ -1,5 +1,6 @@
 import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { AiRequestDto } from './dto';
 
 @Injectable()
 export class AiService {
@@ -10,7 +11,7 @@ export class AiService {
     this.model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
   }
 
-  async generateResponse(prompt: string): Promise<string> {
+  async generateResponse({ prompt }: AiRequestDto): Promise<string> {
     try {
       const result = await this.model.generateContent(prompt);
 

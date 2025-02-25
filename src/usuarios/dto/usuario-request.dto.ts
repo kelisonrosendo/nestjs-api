@@ -1,5 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { EnumPapelUsuario, EnumStatusUsuario } from '@prisma/client';
-import { Exclude } from 'class-transformer';
 import {
   IsDate,
   IsEmail,
@@ -10,7 +10,8 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class CreateUsuarioDto {
+export class UsuarioRequestDto {
+  @ApiProperty()
   @IsString({ message: '$property deve ser uma string' })
   @IsNotEmpty({ message: '$property é obrigatório' })
   @MinLength(3, {
@@ -18,9 +19,11 @@ export class CreateUsuarioDto {
   })
   nome: string;
 
+  @ApiProperty()
   @IsEmail({}, { message: '$property inválido' })
   email: string;
 
+  @ApiProperty()
   @IsString({ message: '$property deve ser uma string' })
   @IsNotEmpty({ message: '$property é obrigatória' })
   @MinLength(6, {
@@ -28,30 +31,30 @@ export class CreateUsuarioDto {
   })
   senha: string;
 
+  @ApiProperty({ required: false })
   @IsString({ message: '$property deve ser uma string' })
   @IsOptional()
   avatar: string;
 
+  @ApiProperty({ enum: EnumPapelUsuario })
   @IsEnum(EnumPapelUsuario, {
     message: '$property deve ter um valor válido: $constraint2',
   })
   papel: EnumPapelUsuario;
 
+  @ApiProperty({ enum: EnumStatusUsuario })
   @IsEnum(EnumStatusUsuario, {
     message: '$property deve ter um valor válido: $constraint2',
   })
   status: EnumStatusUsuario;
 
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsDate({ message: '$property deve ser uma data válida' })
   created_at: Date;
 
-  @IsDate({ message: '$property deve ser uma data válida' })
+  @ApiProperty({ required: false })
   @IsOptional()
+  @IsDate({ message: '$property deve ser uma data válida' })
   updated_at: Date;
-}
-
-export class UsuarioResponseDto extends CreateUsuarioDto {
-  @Exclude()
-  declare senha: string;
 }

@@ -10,42 +10,65 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
-import { CreateUsuarioDto, UsuarioResponseDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { UsuarioQueryDto } from './dto/usuario-query.dto';
-import { plainToInstance } from 'class-transformer';
+import {
+  UsuarioRequestDto,
+  UsuarioResponseDto,
+  UsuarioQueryRequestDto,
+  UsuarioUpdateRequestDto,
+  UsuarioQueryResponseDto,
+} from './dto';
+import {
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
+  @ApiOperation({ summary: 'Cria um novo usuário' })
+  @ApiCreatedResponse({ type: UsuarioResponseDto })
+  @ApiConflictResponse({ description: 'e-mail já está em uso' })
   @Post()
-  create(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this.usuariosService.create(createUsuarioDto);
+  create(@Body() request: UsuarioRequestDto) {
+    return this.usuariosService.create(request);
   }
 
+  @ApiOperation({ summary: 'Busca todos os usuários' })
+  @ApiOkResponse({ type: UsuarioResponseDto, isArray: true })
   @Get()
   findAll() {
     return this.usuariosService.findAll();
   }
 
+  @ApiOperation({ summary: 'Busca paginada de usuários' })
+  @ApiOkResponse({ type: UsuarioQueryResponseDto })
   @Get('query')
-  findQuery(@Query() queryDto: UsuarioQueryDto) {
+  findQuery(@Query() queryDto: UsuarioQueryRequestDto) {
     return this.usuariosService.findQuery(queryDto);
   }
 
+  @ApiOperation({ summary: 'Busca um usuário pelo ID' })
+  @ApiOkResponse({ type: UsuarioResponseDto })
+  @ApiNotFoundResponse({ description: 'usuário não encontrado' })
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const usuario = await this.usuariosService.findOne(id);
-
-    return plainToInstance(UsuarioResponseDto, usuario);
+  findOne(@Param('id') id: string) {
+    return this.usuariosService.findOne(id);
   }
 
+  @ApiOperation({ summary: 'Atualiza um usuário pelo ID' })
+  @ApiOkResponse({ type: UsuarioResponseDto })
+  @ApiNotFoundResponse({ description: 'usuário não encontrado' })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuariosService.update(id, updateUsuarioDto);
+  update(@Param('id') id: string, @Body() request: UsuarioUpdateRequestDto) {
+    return this.usuariosService.update(id, request);
   }
 
+  @ApiOperation({ summary: 'Remove um usuário pelo ID' })
+  @ApiNotFoundResponse({ description: 'usuário não encontrado' })
   @HttpCode(204)
   @Delete(':id')
   remove(@Param('id') id: string) {
